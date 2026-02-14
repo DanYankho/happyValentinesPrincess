@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Princess</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow-x: hidden;
+        }
+
+        .container {
+            text-align: center;
+            padding: 20px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            color: #764ba2;
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+
+        .question {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1em;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(118, 75, 162, 0.4);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(118, 75, 162, 0.6);
+        }
+
+        .btn-no {
+            background: #ccc;
+        }
+
+        .btn-no:hover {
+            background: #999;
+        }
+
+        /* CAPTCHA Styles */
+        .captcha-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            max-width: 450px;
+            margin: 0 auto;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .captcha-header {
+            background: #ff4757;
+            color: white;
+            padding: 15px;
+            margin: -20px -20px 20px -20px;
+            border-radius: 10px 10px 0 0;
+            text-align: left;
+        }
+
+        .captcha-header h3 {
+            font-size: 1.2em;
+            margin-bottom: 5px;
+        }
+
+        .captcha-header p {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .captcha-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .captcha-image {
+            aspect-ratio: 1;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            cursor: pointer;
+            overflow: hidden;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .captcha-image:hover {
+            border-color: #ff4757;
+        }
+
+        .captcha-image.selected {
+            border-color: #ff4757;
+            border-width: 3px;
+        }
+
+        .captcha-image.selected::after {
+            content: '✓';
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #ff4757;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .captcha-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .captcha-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+
+        .captcha-icons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .captcha-icon {
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+
+        .captcha-icon:hover {
+            opacity: 1;
+        }
+
+        .verify-btn {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.2s;
+        }
+
+        .verify-btn:hover {
+            background: #ff3344;
+        }
+
+        .verify-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .level-indicator {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #764ba2;
+            font-weight: bold;
+        }
+
+        /* Video Player Styles */
+        .video-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        video {
+            width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Love Letter Styles */
+        .love-letter {
+            background: linear-gradient(135deg, #ffeef8 0%, #ffe0f0 100%);
+            padding: 50px;
+            border-radius: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        }
+
+        .love-letter::before {
+            content: '💌';
+            font-size: 4em;
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .letter-content {
+            margin-top: 30px;
+            line-height: 2;
+            color: #5a4a6a;
+            font-size: 1.1em;
+            text-align: left;
+            white-space: pre-wrap;
+        }
+
+        .download-btn {
+            margin-top: 30px;
+            background: #ff4757;
+        }
+
+        .hearts {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 20px;
+            animation: float 6s ease-in infinite;
+            opacity: 0.6;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.6;
+            }
+            90% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .error-message {
+            color: #ff4757;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+
+        .success-message {
+            color: #2ed573;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+
+        /* Floral background for final page */
+        .floral-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+            z-index: -2;
+        }
+
+        .floral-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 50 Q30 30 50 10 Q70 30 50 50' fill='white' opacity='0.1'/%3E%3C/svg%3E");
+            z-index: -1;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Animation -->
+    <div class="hearts" id="heartsContainer"></div>
+    <div class="floral-bg hidden" id="floralBg"></div>
+    <div class="floral-pattern hidden" id="floralPattern"></div>
+
+    <!-- Page 1: Initial Question -->
+    <div class="container" id="page1">
+        <div class="card">
+            <h1>👑 Hello Beautiful 👑</h1>
+            <p class="question">Are you the Princess?</p>
+            <button class="btn" onclick="goToPage2()">Yes, I am! 💕</button>
+            <button class="btn btn-no" onclick="wrongAnswer()">No... 🤔</button>
+        </div>
+    </div>
+
+    <!-- Page 2: Name Verification -->
+    <div class="container hidden" id="page2">
+        <div class="card">
+            <h1>✨ Almost There... ✨</h1>
+            <p class="question">Are you Wala Colleen "Baby" Chikusa?</p>
+            <button class="btn" onclick="goToCaptcha()">Yes, that's me! 🥰</button>
+            <button class="btn btn-no" onclick="wrongAnswer()">No... 🤨</button>
+        </div>
+    </div>
+
+    <!-- Page 3: CAPTCHA Level 1 (Identify Girlfriend) -->
+    <div class="container hidden" id="captcha1">
+        <div class="captcha-container">
+            <div class="captcha-header">
+                <h3>Select all images with</h3>
+                <h2 style="font-size: 1.5em;">YOU (The Princess)</h2>
+                <p>Click verify once there are none left.</p>
+            </div>
+            <div class="level-indicator">Security Level 1 of 3 🔒</div>
+            <div class="captcha-grid" id="grid1"></div>
+            <div class="captcha-footer">
+                <div class="captcha-icons">
+                    <svg class="captcha-icon" onclick="refreshCaptcha(1)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+                    </svg>
+                    <svg class="captcha-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                    <svg class="captcha-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>
+                    </svg>
+                </div>
+                <button class="verify-btn" onclick="verifyCaptcha(1)">VERIFY</button>
+            </div>
+            <p class="error-message hidden" id="error1">Please select all 6 images of yourself! 💝</p>
+        </div>
+    </div>
+
+    <!-- Page 4: CAPTCHA Level 2 (Identify Boyfriend) -->
+    <div class="container hidden" id="captcha2">
+        <div class="captcha-container">
+            <div class="captcha-header">
+                <h3>Select all images with</h3>
+                <h2 style="font-size: 1.5em;">YOUR BOYFRIEND</h2>
+                <p>Click verify once there are none left.</p>
+            </div>
+            <div class="level-indicator">Security Level 2 of 3 🔒🔒</div>
+            <div class="captcha-grid" id="grid2"></div>
+            <div class="captcha-footer">
+                <div class="captcha-icons">
+                    <svg class="captcha-icon" onclick="refreshCaptcha(2)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+                    </svg>
+                    <svg class="captcha-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                    <svg class="captcha-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>
+                    </svg>
+                </div>
+                <button class="verify-btn" onclick="verifyCaptcha(2)">VERIFY</button>
+            </div>
+            <p class="error-message hidden" id="error2">Please select all 6 images of your boyfriend! 💑</p>
+        </div>
+    </div>
+
+    <!-- Page 5: CAPTCHA Level 3 (Identify Couple Photos) -->
+    <div class="container hidden" id="captcha3">
+        <div class="captcha-container">
+            <div class="captcha-header">
+                <h3>Select all images with</h3>
+                <h2 style="font-size: 1.5em;">YOU & YOUR BOYFRIEND</h2>
+                <p>Click verify once there are none left.</p>
+            </div>
+            <div class="level-indicator">Security Level 3 of 3 🔒🔒🔒</div>
+            <div class="captcha-grid" id="grid3"></div>
+            <div class="captcha-footer">
+                <div class="captcha-icons">
+                    <svg class="captcha-icon" onclick="refreshCaptcha(3)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+                    </svg>
+                    <svg class="captcha-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    </svg>
+                    <svg class="captcha-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>
+                    </svg>
+                </div>
+                <button class="verify-btn" onclick="verifyCaptcha(3)">VERIFY</button>
+            </div>
+            <p class="error-message hidden" id="error3">Please select all 6 couple photos! 💕</p>
+        </div>
+    </div>
+
+    <!-- Page 6: Video Player -->
+    <div class="container hidden" id="videoPage">
+        <div class="video-container">
+            <h1 style="color: white; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">🎬 A Special Message For You 🎬</h1>
+            <video id="loveVideo" controls onended="videoEnded()">
+                <source src="video.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <p style="color: white; margin-top: 15px; opacity: 0.9;">Watch till the end for your surprise... 💝</p>
+        </div>
+    </div>
+
+    <!-- Page 7: Love Letter -->
+    <div class="container hidden" id="letterPage">
+        <div class="love-letter">
+            <h1 style="color: #ff4757; text-align: center; font-size: 2.5em; margin-bottom: 10px;">Happy Valentine's Day!</h1>
+            <p style="text-align: center; color: #764ba2; font-style: italic; margin-bottom: 30px;">You have successfully confirmed that you possess my heart. ❤️</p>
+            
+            <div class="letter-content" id="letterText">
+My Dearest Wala Colleen "Baby" Chikusa,
+
+From the moment you entered my life, everything changed. You brought colors to my world that I never knew existed, and laughter that fills every corner of my heart.
+
+Every day with you is a new adventure, a new reason to smile, and a new reminder of how blessed I am to have you by my side. Your strength, your kindness, your beautiful smile - they all make me fall in love with you more and more each passing day.
+
+Through every challenge and every joy, I want to be there with you. Holding your hand, wiping your tears, celebrating your victories, and building dreams together.
+
+You are my princess, my best friend, my home. Thank you for being you, and thank you for choosing me.
+
+With Love From Behind The House,
+Danny 💕
+
+P.S. - I love you more than words could ever express, but I'll spend forever trying to show you.
+            </div>
+            
+            <button class="btn download-btn" onclick="downloadPDF()">📥 Download Love Letter as PDF</button>
+        </div>
+    </div>
+
+    <!-- Background Music -->
+    <audio id="bgMusic" loop>
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        // Create floating hearts
+        function createHearts() {
+            const container = document.getElementById('heartsContainer');
+            const hearts = ['💕', '💖', '💗', '💓', '💝', '❤️', '💜'];
+            
+            setInterval(() => {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.animationDuration = (Math.random() * 3 + 4) + 's';
+                heart.style.fontSize = (Math.random() * 20 + 15) + 'px';
+                container.appendChild(heart);
+                
+                setTimeout(() => heart.remove(), 7000);
+            }, 300);
+        }
+        createHearts();
+
+        // Navigation functions
+        function goToPage2() {
+            document.getElementById('page1').classList.add('hidden');
+            document.getElementById('page2').classList.remove('hidden');
+        }
+
+        function goToCaptcha() {
+            document.getElementById('page2').classList.add('hidden');
+            document.getElementById('captcha1').classList.remove('hidden');
+            initCaptcha(1);
+        }
+
+        function wrongAnswer() {
+            alert("Hmm... I think you might be in the wrong place! This is a special place for my princess only. 👑");
+        }
+
+        // CAPTCHA System
+        let selectedImages = {
+            1: new Set(),
+            2: new Set(),
+            3: new Set()
+        };
+
+        const captchaConfig = {
+            1: {
+                correct: ['girlfriend1.jpg', 'girlfriend2.jpg', 'girlfriend3.jpg', 'girlfriend4.jpg', 'girlfriend5.jpg', 'girlfriend6.jpg'],
+                wrong: ['randomGirlfriend1.jpg', 'randomGirlfriend2.jpg', 'randomGirlfriend3.jpg'],
+                gridId: 'grid1',
+                required: 6
+            },
+            2: {
+                correct: ['boyfriend1.jpg', 'boyfriend2.jpg', 'boyfriend3.jpg', 'boyfriend4.jpg', 'boyfriend5.jpg', 'boyfriend6.jpg'],
+                wrong: ['randomBoyfriend1.jpg', 'randomBoyfriend2.jpg', 'randomBoyfriend3.jpg'],
+                gridId: 'grid2',
+                required: 6
+            },
+            3: {
+                correct: ['couple1.jpg', 'couple2.jpg', 'couple3.jpg', 'couple4.jpg', 'couple5.jpg', 'couple6.jpg'],
+                wrong: ['randomCouple1.jpg', 'randomCouple2.jpg', 'randomCouple3.jpg'],
+                gridId: 'grid3',
+                required: 6
+            }
+        };
+
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
+
+        function initCaptcha(level) {
+            selectedImages[level] = new Set();
+            const config = captchaConfig[level];
+            const allImages = shuffleArray([...config.correct, ...config.wrong]);
+            const grid = document.getElementById(config.gridId);
+            grid.innerHTML = '';
+
+            allImages.forEach((img, index) => {
+                const div = document.createElement('div');
+                div.className = 'captcha-image';
+                div.dataset.filename = img;
+                div.dataset.index = index;
+                div.onclick = () => toggleImage(level, index, img, div);
+                
+                const image = document.createElement('img');
+                image.src = img;
+                image.alt = 'CAPTCHA Image';
+                image.onerror = () => {
+                    // Fallback if image doesn't exist
+                    div.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                    div.style.display = 'flex';
+                    div.style.alignItems = 'center';
+                    div.style.justifyContent = 'center';
+                    div.style.color = 'white';
+                    div.style.fontSize = '0.7em';
+                    div.style.padding = '5px';
+                    div.textContent = img.replace('.jpg', '');
+                };
+                
+                div.appendChild(image);
+                grid.appendChild(div);
+            });
+
+            document.getElementById(`error${level}`).classList.add('hidden');
+        }
+
+        function toggleImage(level, index, filename, element) {
+            if (selectedImages[level].has(index)) {
+                selectedImages[level].delete(index);
+                element.classList.remove('selected');
+            } else {
+                selectedImages[level].add(index);
+                element.classList.add('selected');
+            }
+        }
+
+        function refreshCaptcha(level) {
+            initCaptcha(level);
+        }
+
+        function verifyCaptcha(level) {
+            const config = captchaConfig[level];
+            const grid = document.getElementById(config.gridId);
+            const selectedElements = grid.querySelectorAll('.selected');
+            
+            let correctCount = 0;
+            selectedElements.forEach(el => {
+                const filename = el.dataset.filename;
+                if (config.correct.includes(filename)) {
+                    correctCount++;
+                }
+            });
+
+            // Must select exactly 6 correct images and no wrong ones
+            const totalSelected = selectedImages[level].size;
+            
+            if (correctCount === config.required && totalSelected === config.required) {
+                // Success - move to next level
+                if (level === 1) {
+                    document.getElementById('captcha1').classList.add('hidden');
+                    document.getElementById('captcha2').classList.remove('hidden');
+                    initCaptcha(2);
+                } else if (level === 2) {
+                    document.getElementById('captcha2').classList.add('hidden');
+                    document.getElementById('captcha3').classList.remove('hidden');
+                    initCaptcha(3);
+                } else if (level === 3) {
+                    document.getElementById('captcha3').classList.add('hidden');
+                    document.getElementById('videoPage').classList.remove('hidden');
+                    // Auto-play video
+                    document.getElementById('loveVideo').play();
+                }
+            } else {
+                document.getElementById(`error${level}`).classList.remove('hidden');
+                // Shake animation
+                grid.style.animation = 'shake 0.5s';
+                setTimeout(() => grid.style.animation = '', 500);
+            }
+        }
+
+        function videoEnded() {
+            document.getElementById('videoPage').classList.add('hidden');
+            document.getElementById('letterPage').classList.remove('hidden');
+            document.getElementById('floralBg').classList.remove('hidden');
+            document.getElementById('floralPattern').classList.remove('hidden');
+            
+            // Start background music
+            const music = document.getElementById('bgMusic');
+            music.volume = 0.3;
+            music.play().catch(e => console.log('Audio autoplay blocked'));
+        }
+
+        function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Add romantic styling to PDF
+            doc.setFillColor(255, 240, 245);
+            doc.rect(0, 0, 210, 297, 'F');
+            
+            // Title
+            doc.setFontSize(24);
+            doc.setTextColor(255, 71, 87);
+            doc.text('Happy Valentine\'s Day!', 105, 30, { align: 'center' });
+            
+            // Subtitle
+            doc.setFontSize(12);
+            doc.setTextColor(118, 75, 162);
+            doc.text('You have successfully confirmed that you possess my heart. ❤️', 105, 40, { align: 'center' });
+            
+            // Letter content
+            doc.setFontSize(11);
+            doc.setTextColor(90, 74, 106);
+            const letterText = document.getElementById('letterText').textContent;
+            const splitText = doc.splitTextToSize(letterText, 180);
+            doc.text(splitText, 15, 60);
+            
+            // Save
+            doc.save('My_Love_Letter_For_Wala.pdf');
+        }
+
+        // Add shake animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-10px); }
+                75% { transform: translateX(10px); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
